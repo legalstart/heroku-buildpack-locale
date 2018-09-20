@@ -51,10 +51,12 @@ for lang in $langs; do
 
   puts_step "Updating or installing $package"
   apt-get $APT_OPTIONS update
+  apt-get $APT_OPTIONS -y install locales
   apt-get $APT_OPTIONS -y -d install --reinstall $package
 
   cat <<EOF >> $BUILD_DIR/.profile.d/000_locale.sh
 localedef -f $encoding -i $pack /app/.heroku/locales/usr/share/locale-langpack/$language/
+locale-gen $lang.$encoding
 EOF
 done
 
@@ -66,4 +68,5 @@ done
 cat <<EOF >> $BUILD_DIR/.profile.d/000_locale.sh
 export I18NPATH=/app/.heroku/locales/var/lib/locales/supported.d
 export LOCPATH=/app/.heroku/locales/usr/share/locale-langpack/
+update-locale LANG=$LANG
 EOF
